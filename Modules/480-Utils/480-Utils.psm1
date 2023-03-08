@@ -38,17 +38,17 @@ function Select-VM([string] $folder){
     $selected_vm = $null
     try 
     {
-        $vms = Get-VM -Location $folder
+        $vms = index number [X] do you wish to pick?"
+    #480-TODO need to deal with an invalid index (consider making this a check function)
+    $selected_vm = $vms[$pick_index -1]
+    Write-Host "You Picked " $selected_vm.name
+    #Note this is a full on vm object we can int Get-VM -Location $folder
         $index = 1
         foreach($vm in $vms){
             Write-Host [$index] $vm.name
             $index+=1
     }
-    $pick_index = Read-Host "Which index number [X] do you wish to pick?"
-    #480-TODO need to deal with an invalid index (consider making this a check function)
-    $selected_vm = $vms[$pick_index -1]
-    Write-Host "You Picked " $selected_vm.name
-    #Note this is a full on vm object we can interact with
+    $pick_index = Read-Host "Whicheract with
     return $selected_vm
 }
     catch {
@@ -56,7 +56,7 @@ function Select-VM([string] $folder){
     }
 }
 
-
+<#
 function Cloner(){
     $vm = Read-Host -Prompt "Enter name of VM you want to clone: "
     $snapshot = Get-Snapshot  -VM $vm -Name "Base"
@@ -69,5 +69,41 @@ function Cloner(){
     $newvmmei = Read-Host "Name the new VM: "
     $newvm = New-VM -Name $newvmmei -VM $linkedvm -VMHost $vmhostselected -DataStore $ds
     $linkedvm | Remove-VM
+
+}
+#>
+
+function SwitchCreation([string] $SwitchName, [string] $PortName){
+    try{
+
+    New-VirtualSwitch -VMHost '192.168.7.27' -Name $SwitchName
+    Get-VMHost '192.168.7.27' | Get-VirtualSwitch -Name $SwitchName | New-VirtualPortGroup -Name $PortName
+
+    }
+    catch{
+
+        Write-Host "Error with creating Switch/Port"
+
+    }
+
+
+}
+
+function Get-VMInfo([string] $VMName){
+    
+    $vm = Get-VM -Name $VMName
+    $netAdapter = Get-NetworkAdapter -VM $vm | Select-Object -First 1
+    $mac = $netAdapter.MacAddress
+    $ip = (Get-VM | Where-Object {$_.name -eq $VMName}).Guest.IPAddress[0]
+    $vmname = $vm.Name
+    $result = @{
+
+        VMName = $VMName
+        IPAddr = $ip
+        MacAddr = $mac
+
+    }
+
+    return New-Object PSObject -Property $result
 
 }
