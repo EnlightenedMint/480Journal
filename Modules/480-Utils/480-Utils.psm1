@@ -56,8 +56,8 @@ function Select-VM([string] $folder){
     }
 }
 
-<#
-function Cloner(){
+
+<#function Cloner(){
     $vm = Read-Host -Prompt "Enter name of VM you want to clone: "
     $snapshot = Get-Snapshot  -VM $vm -Name "Base"
     $vmhost = Read-Host -Prompt "Enter the ESXI IP"
@@ -105,5 +105,33 @@ function Get-VMInfo([string] $VMName){
     }
 
     return New-Object PSObject -Property $result
+
+}
+
+function StartVM([string] $VMNamae){
+
+    try{
+    $vm = Get-VM -Name $VMNamae
+    Start-VM $vm
+    Write-Host "VM '$VMNamae' started"
+    }
+    catch{
+
+        Write-Host "Error starting VM check spelling."
+    }
+
+}
+
+function SetNetAdapter([string] $vmname, [string] $newnetwork){
+    try{
+    $nic = Get-VirtualNetwork -Name $newnetwork
+    Get-VM -Name $vmname | Get-NetworkAdapter | Set-NetworkAdapter -NetworkName $nic
+    Write-Output "Network Adapter for '$vmname' set to '$newnetwork'"
+    }
+    catch {
+        Write-Error $_.Exception.Message
+    }
+    
+
 
 }
