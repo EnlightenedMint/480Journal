@@ -7,4 +7,6 @@ Import-Module '480-Utils' -Force
 #Select-VM -folder "BASEVM"
 #Cloner
 #SwitchCreation -SwitchName "Blue17" -PortName "BluePort17"
-Get-VMInfo -VMName "480-fw"
+Get-VMInfo -VMName "blue1-fw"
+#StartVM -VMNamae "blue1-fw"
+#SetNetAdapter -vmname 'blue1-fw' -newnetwork '480-WAN'
