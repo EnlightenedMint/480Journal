@@ -135,3 +135,14 @@ function SetNetAdapter([string] $vmname, [string] $newnetwork){
 
 
 }
+
+function ClonerV2([string] $sourcevm, [string] $destvm, [string] $destnetwork){
+    $vm = Get-VM $sourcevm
+    $snapshot = Get-Snapshot -VM $vm -Name "Base"
+    $vmhost = Get-VMHost -Name "192.168.7.27"
+    $ds = Get-Datastore -Name "datastore2-super17"
+    $linkedclone = $destvm
+    $linkedvm = New-VM -LinkedClone -Name $linkedclone -VM $vm -ReferenceSnapshot $snapshot -VMHost $vmhost -DataStore $ds
+    # $newvm = New-VM -Name $destvm -VM $linkedvm -VMHost $vmhost -DataStore $ds
+    $newvmnet = Get-NetworkAdapter -VM $linkedvm | Set-NetworkAdapter -NetworkName $destnetwork -Confirm:$false
+}
