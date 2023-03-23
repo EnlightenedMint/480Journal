@@ -7,9 +7,10 @@ Import-Module '480-Utils' -Force
 #Select-VM -folder "BASEVM"
 #Cloner
 #SwitchCreation -SwitchName "Blue17" -PortName "BluePort17"
-Get-VMInfo -VMName "Rocky-3"
+Get-VMInfo -VMName "ubuntu-2"
 #StartVM -VMNamae "Rocky-*"
 #SetNetAdapter -vmname 'blue1-fw' -newnetwork '480-WAN'
-#for ($i = 1; $i -le 3; $i++) {
-#    ClonerV2 -sourcevm "Rocky" -destvm "Rocky-$i" -destnetwork "BluePort17"
+#for ($i = 1; $i -le 2; $i++) {
+#    ClonerV2 -sourcevm "ubuntu-SERVER" -destvm "ubuntu-$i" -destnetwork "BluePort17"
 #}
+#EditVM -vmname "Rocky-3"
