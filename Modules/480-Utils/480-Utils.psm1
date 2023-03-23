@@ -146,3 +146,19 @@ function ClonerV2([string] $sourcevm, [string] $destvm, [string] $destnetwork){
     # $newvm = New-VM -Name $destvm -VM $linkedvm -VMHost $vmhost -DataStore $ds
     $newvmnet = Get-NetworkAdapter -VM $linkedvm | Set-NetworkAdapter -NetworkName $destnetwork -Confirm:$false
 }
+
+function EditVM([string] $vmname){
+    Write-Host "Current VM Specs: "
+    $vm = Get-VM -Name $vmname
+    $memUpgrade = Read-Host "Do you want to change the memory of the VM (y/n)?"
+        if ($memUpgrade -eq "y"){
+            $memGB = Read-Host "Enter new memory size in GB: "
+            Set-VM -VM $vm -MemoryGB $memGB
+        }
+    $cpuUpgrade = Read-Host "Do you want to change the cpu core count of the VM (y/n)?"
+        if ($cpuUpgrade -eq "y"){
+            $cpucore = Read-Host "Enter the new core count: "
+            Set-VM -VM $vm -CoresPerSocket $cpucore
+        }
+    Write-Host "Pronto." -ForegroundColor "yellow"
+}
