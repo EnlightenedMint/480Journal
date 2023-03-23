@@ -26,7 +26,7 @@ linux:
         device: ens34
 
   vars:
-    public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDNzOR599mZ90lYyjhAeXQtmrz/wjiuT8t8sUjpGchKC3HsVuw8wUicnePNZpa6viE34af91kp7oi6rMn2wjXhZi9A2e/4lMGLtREbUZyQh7WEpiznrmaR2Od+ngAFXAL+/5v1K+bzsvnPtvWpUr9ZEUQb3PbjhpwXMrnEs6Ed+zlgMYelbHlW3GTn9PTju+Z3IQKUFqgGKUii94M2hKX3STp1CRKs/MDXa/FHSnng3smz+9z/M3uw1exFCsjlSSuQ25B4Iy8m5AoJpRbB5ugcqyaAUycfafqEZuMuB9KlkbdDWrS7ehKodRBXE9oFBUiQ0PbCsJWcG3I8NOzsbO2sPVHZJh0pEckXEBzrPvvJzcx92UFKmzDl5hHC/fI359OsN0O+t0XR83PA6lTJfenB5mWWoS/VvKrfN9YCQM4JdKriWKjG1IJPCJgZMd96oPgbvCGfEOf4/KJdh8pQk//E2BUBGuwKp4a+9Td0k9AlhE7UMPlJxv83NAuJbGmi1JlM= admin@xubuntu-wan"
+    public_key: "ssh-rsa XePX/5v1K+bzsvnPtvX4M2hKXt0XR83PA6lTAFASFPlXXXASF= admin@xubuntu-wan"
     ansible_user: rangeuser
     prefix: 24
     gateway: 10.0.5.2
