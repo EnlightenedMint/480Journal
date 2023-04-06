@@ -1,0 +1,79 @@
+- name: Install Wazuh Server and Agent
+  hosts: all
+  become: true
+  tasks:
+    - name: update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Wazuh server file
+      ansible.builtin.get_url:
+        url: https://packages.wazuh.com/4.4/wazuh-install.sh
+        dest: /root/wazuh-install.sh
+        mode: u+x
+      when: "'10.0.5.30' in inventory_hostname"
+
+    - name: Download Wazuh configuration file
+      ansible.builtin.get_url:
+        url: https://packages.wazuh.com/4.4/config.yml
+        dest: /root/config.yml
+      when: "'10.0.5.30' in inventory_hostname"
+
+    - name: Edit Wazuh configuration file
+      ansible.builtin.template:
+        src: wazuh-config.j2
+        dest: /root/config.yml
+      when: "'10.0.5.30' in inventory_hostname"
+
+    - name: Generate Wazuh configuration files
+      ansible.builtin.shell:
+        cmd: /bin/bash /root/wazuh-install.sh --generate-config-files
+      when: "'10.0.5.30' in inventory_hostname"
+
+    - name: Install Wazuh indexer
+      ansible.builtin.shell:
+        cmd: /bin/bash /root/wazuh-install.sh --wazuh-indexer node-1
+      when: "'10.0.5.30' in inventory_hostname"
+
+    - name: Start Wazuh cluster
+      ansible.builtin.shell:
+        cmd: /bin/bash /root/wazuh-install.sh --start-cluster
+      when: "'10.0.5.30' in inventory_hostname"
+
+    - name: Install Wazuh server
+      ansible.builtin.shell:
+        cmd: /bin/bash /root/wazuh-install.sh --wazuh-server wazuh-1
+      when: "'10.0.5.30' in inventory_hostname"
+
+#   - name: Install Wazuh dashboard
+#      ansible.builtin.shell:
+#        cmd: /bin/bash /root/wazuh-install.sh --wazuh-dashboard dashboard
+#      when: "'10.0.5.30' in inventory_hostname"
+
+#    - name: Print access credentials
+#      shell: tar -O -xvf wazuh-install-files.tar wazuh-install-files/wazuh-passwords.txt
+#      args:
+#        chdir: /usr/share/wazuh
+
+
+    - name: Fetch Wazuh agent file
+      ansible.builtin.get_url:
+        url: https://packages.wazuh.com/4.x/apt/pool/main/w/wazuh-agent/wazuh-agent_4.3.10-1_amd64.deb
+        dest: /root/wazuh-agent-4.3.10.deb
+      when: "'10.0.5.31' in inventory_hostname"
+
+    - name: Install Wazuh agent
+      ansible.builtin.shell: |
+        sudo dpkg -i /root/wazuh-agent-4.3.10.deb
+        sudo systemctl daemon-reload
+        sudo systemctl enable wazuh-agent
+        sudo systemctl start wazuh-agent
+      when: "'10.0.5.31' in inventory_hostname"
+
+    - name: Remove installation files
+      ansible.builtin.file:
+        path: "/root/{{ item }}"
+        state: absent
+      with_items:
+        - wazuh-install.sh
+        - wazuh-agent-4.3.10.deb
