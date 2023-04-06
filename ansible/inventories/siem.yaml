@@ -1,0 +1,24 @@
+siemserver:
+  hosts:
+  children:
+    server:
+      hosts:
+        10.0.5.30:
+          hostname: ubuntu-1
+          lan_ip: 10.0.5.30
+    clients:
+      hosts:
+        10.0.5.31:
+          hostname: ubuntu-2
+          lan_ip: 10.0.5.31
+
+
+
+  vars:
+    public_key: "ssh-rsa XF9AlhE7UMPlJxv83NAuJbGmi1JlM= admxn"
+    ansible_user: rangeuser
+    prefix: 24
+    gateway: 10.0.5.2
+    name_server: 10.0.5.5
+    domain: blue17.local
+
