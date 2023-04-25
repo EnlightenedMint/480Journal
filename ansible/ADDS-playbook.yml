@@ -1,0 +1,61 @@
+- name: Set ADDS
+  hosts: 10.0.5.5
+  vars_prompt:
+    - name: username
+      prompt: "Provide the username"
+      private: no
+    - name: password
+      prompt: "Provide the password"
+      private: yes
+    - name: domain_name
+      prompt: "Provide the domain name"
+      private: no
+    - name: hostname
+      prompt: "Provide the new hostname"
+      private: no
+  vars: 
+    ansible_shell_type: powershell
+  tasks:
+    - name: Rename computer
+      ansible.windows.win_hostname:
+        name: "{{ hostname }}"
+      register: rename_result
+
+    - name: Reboot if required
+      ansible.windows.win_reboot:
+      when: rename_result.reboot_required
+
+    - name: AD services
+      ansible.windows.win_feature:
+        name: AD-Domain-Services
+        state: present
+        include_mangagement_tools: yes
+
+    - name: Create new forest
+      ansible.windows.win_domain:
+        dns_domain_name: "{{ domain_name }}"
+        safe_mode_password: "{{ password }}"
+        install_dns: true
+      register: domain_install_result
+
+    - name: Reboot if required after domain join
+      ansible.windows.win_reboot:
+      when: domain_install_result.reboot_required
+
+    - name: Add user to domain admins
+      community.windows.win_domain_user:
+        name: deployer
+        state: present
+        groups_action: add
+        groups:
+          - Domain Admins
+
+    - name: Create organizational units
+      ansible.windows.win_powershell: 
+        script: |
+          New-ADOrganizationalUnit -Name "blue17" -Path "DC=blue17,DC=LOCAL"
+          New-ADOrganizationalUnit -Name "Accounts" -Path "OU=blue17,DC=blue17,DC=LOCAL"
+          New-ADOrganizationalUnit -Name "Groups" -Path "OU=Accounts,OU=blue17,DC=blue17,DC=LOCAL"
+          New-ADOrganizationalUnit -Name "Computers" -Path "OU=blue17,DC=blue17,DC=LOCAL"
+          New-ADOrganizationalUnit -Name "Servers" -Path "OU=Computers,OU=blue17,DC=blue17,DC=LOCAL"
+          New-ADOrganizationalUnit -Name "Workstations" -Path "OU=Computers,OU=blue17,DC=blue17,DC=LOCAL"
