@@ -163,3 +163,10 @@ function EditVM([string] $vmname){
         }
     Write-Host "Pronto." -ForegroundColor "yellow"
 }
+
+function SetWinIP([string] $VMname, [string] $GuestUser, [string] $Guestpass, [string] $IP, [string] $Subnet, [string] $Gateway, [string] $Nameserver){
+    $command = "netsh interface ip set address Ethernet0 static $IP $Subnet $Gateway 1; netsh interface ip add dns Ethernet0 $Nameserver index=1"
+    Invoke-VMScript -VM $VMName -GuestUser $GuestUser -GuestPassword $GuestPass -ScriptText $command
+}
+
+
